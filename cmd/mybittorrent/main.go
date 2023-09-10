@@ -27,7 +27,7 @@ func decodeBencode(bencodedString string) (interface{}, error) {
 			}
 		}
 
-		if isNumber {
+		if !isNumber {
 			str := bencodedString[1 : len(bencodedString)-2]
 			return strconv.Atoi(str)
 		}
