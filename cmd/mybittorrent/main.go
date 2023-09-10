@@ -17,12 +17,19 @@ import (
 func decodeBencode(bencodedString string) (interface{}, error) {
 	if unicode.IsDigit(rune(bencodedString[0])) {
 		var firstColonIndex int
+		isNumber := true
 
 		for i := 0; i < len(bencodedString); i++ {
 			if bencodedString[i] == ':' {
+				isNumber = false
 				firstColonIndex = i
 				break
 			}
+		}
+
+		if isNumber {
+			str := bencodedString[1 : len(bencodedString)-2]
+			return strconv.Atoi(str)
 		}
 
 		lengthStr := bencodedString[:firstColonIndex]
