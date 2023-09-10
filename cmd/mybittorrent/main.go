@@ -7,6 +7,7 @@ import (
 	"fmt"
 	"os"
 	"strconv"
+	"strings"
 	"unicode"
 	// bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
@@ -14,29 +15,81 @@ import (
 // Example:
 // - 5:hello -> hello
 // - 10:hello12345 -> hello12345
-func decodeBencode(bencodedString string) (interface{}, error) {
+func decodeBencode(bencodedString string) (interface{}, int, error) {
 	if unicode.IsDigit(rune(bencodedString[0])) {
-		var firstColonIndex int
+		return decodeString(bencodedString)
 
-		for i := 0; i < len(bencodedString); i++ {
-			if bencodedString[i] == ':' {
-				firstColonIndex = i
-				break
-			}
-		}
-
-		lengthStr := bencodedString[:firstColonIndex]
-
-		length, err := strconv.Atoi(lengthStr)
-		if err != nil {
-			return "", err
-		}
-
-		return bencodedString[firstColonIndex+1 : firstColonIndex+1+length], nil
 	} else {
-		str := bencodedString[1 : len(bencodedString)-1]
-		return strconv.Atoi(str)
+		if rune(bencodedString[0]) == 'i' {
+			return decodeInteger(bencodedString)
+		}
+		if rune(bencodedString[0]) == 'l' {
+			return decodeList(bencodedString)
+		}
+
 	}
+	return "", 0, fmt.Errorf("unsupported type")
+}
+
+func decodeList(s string) (interface{}, int, error) {
+	list := s[1:]
+	var res []interface{}
+	totalChars := 0
+	var err error
+	for len(list) > 1 {
+		if rune(list[0]) == 'e' {
+			break
+		}
+		data, index, err := decodeBencode(list)
+		if err != nil {
+			return []interface{}{}, 0, err
+		}
+
+		res = append(res, data)
+		list = list[index:]
+		totalChars += index
+
+	}
+	if rune(list[0]) != 'e' {
+		return []interface{}{}, 0, fmt.Errorf("wrong list encoding")
+	}
+
+	return res, totalChars + 2, err
+
+}
+func decodeInteger(s string) (int, int, error) {
+	var buffer strings.Builder
+	index := 1
+	for rune(s[index]) != 'e' {
+		buffer.WriteByte(s[index])
+		index++
+	}
+
+	res, err := strconv.Atoi(buffer.String())
+
+	return res, len(buffer.String()) + 2, err
+
+}
+
+func decodeString(s string) (string, int, error) {
+	var firstColonIndex = indexOfSemicolon(s)
+
+	lengthStr := s[:firstColonIndex]
+
+	length, err := strconv.Atoi(lengthStr)
+
+	return s[firstColonIndex+1 : firstColonIndex+1+length], length + 2, err
+}
+
+func indexOfSemicolon(s string) int {
+	var index int
+	for i := 0; i < len(s); i++ {
+		if s[i] == ':' {
+			index = i
+			break
+		}
+	}
+	return index
 }
 
 func main() {
@@ -48,7 +101,7 @@ func main() {
 	if command == "decode" {
 
 		bencodedValue := os.Args[2]
-		decoded, err := decodeBencode(bencodedValue)
+		decoded, _, err := decodeBencode(bencodedValue)
 		if err != nil {
 			fmt.Println(err)
 			return
