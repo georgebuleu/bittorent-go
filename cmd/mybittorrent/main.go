@@ -42,7 +42,7 @@ func main() {
 		}
 		fmt.Printf("Tracker URL: %s", info.URL)
 		//fmt.Println("Length:" + strconv.FormatInt(info.length, 10))
-		//fmt.Printf("%d", info.length)
+		fmt.Printf("Length: %d", info.length)
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
