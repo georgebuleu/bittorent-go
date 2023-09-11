@@ -80,8 +80,11 @@ func decodeString(s string) (string, int, error) {
 	lengthStr := s[:firstColonIndex]
 
 	length, err := strconv.Atoi(lengthStr)
+	if err != nil {
+		return "", 0, err
+	}
 
-	return s[firstColonIndex+1 : firstColonIndex+1+length], length + 2, err
+	return s[firstColonIndex+1 : firstColonIndex+1+length], length + firstColonIndex + 1, err
 }
 
 func indexOfSemicolon(s string) int {
