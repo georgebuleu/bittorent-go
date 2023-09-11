@@ -40,8 +40,8 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("Tracker URL:%v\nLength:%v", info.URL, info.length)
-		//fmt.Printf("" info.length * 8)
+		fmt.Printf("Tracker URL:%s\n", info.URL)
+		fmt.Printf("Length:%d", info.length)
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
