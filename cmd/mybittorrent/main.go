@@ -53,6 +53,10 @@ func decodeList(s string) (interface{}, int, error) {
 		return nil, 0, fmt.Errorf("wrong list encoding")
 	}
 
+	if len(res) == 0 {
+		return []interface{}{}, totalChars + 2, nil
+	}
+
 	return res, totalChars + 2, nil
 
 }
