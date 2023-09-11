@@ -35,7 +35,6 @@ func decodeList(s string) (interface{}, int, error) {
 	list := s[1:]
 	var res []interface{}
 	totalChars := 0
-	var err error
 	for len(list) > 1 {
 		if rune(list[0]) == 'e' {
 			break
@@ -54,7 +53,7 @@ func decodeList(s string) (interface{}, int, error) {
 		return []interface{}{}, 0, fmt.Errorf("wrong list encoding")
 	}
 
-	return res, totalChars + 2, err
+	return res, totalChars + 2, nil
 
 }
 func decodeInteger(s string) (int, int, error) {
