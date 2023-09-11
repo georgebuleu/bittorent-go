@@ -26,9 +26,45 @@ func decodeBencode(bencodedString string) (interface{}, int, error) {
 		if rune(bencodedString[0]) == 'l' {
 			return decodeList(bencodedString)
 		}
+		if rune(bencodedString[0]) == 'd' {
+			return decodeDictionary(bencodedString)
+		}
 
 	}
 	return "", 0, fmt.Errorf("unsupported type")
+}
+
+func decodeDictionary(s string) (interface{}, int, error) {
+	var dic = make(map[string]interface{})
+	totalKeys := 0
+	dicStr := s[1:]
+
+	for len(dicStr) > 1 {
+		if rune(dicStr[0]) == 'e' {
+			break
+		}
+		key, pos, err := decodeBencode(dicStr)
+		if err != nil {
+			return nil, 0, err
+		}
+		dicStr = dicStr[pos:]
+		totalKeys += pos
+		val, pos, err := decodeBencode(dicStr)
+		if err != nil {
+			return nil, 0, err
+		}
+		dic[key.(string)] = val
+		dicStr = dicStr[pos:]
+		totalKeys += pos
+	}
+	if rune(dicStr[0]) != 'e' {
+		return nil, 0, fmt.Errorf("wrong dictionary encoding")
+	}
+	if len(dic) == 0 {
+		return map[string]interface{}{}, 0, nil
+	}
+
+	return dic, totalKeys + 2, nil
 }
 
 func decodeList(s string) (interface{}, int, error) {
@@ -112,8 +148,11 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-
-		jsonOutput, _ := json.Marshal(decoded)
+		jsonOutput, err := json.Marshal(decoded)
+		if err != nil {
+			fmt.Println(err)
+			os.Exit(1)
+		}
 		fmt.Println(string(jsonOutput))
 	} else {
 		fmt.Println("Unknown command: " + command)
