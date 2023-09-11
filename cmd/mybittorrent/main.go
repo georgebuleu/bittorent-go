@@ -6,7 +6,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"strconv"
 	// bencode "github.com/jackpal/bencode-go" // Available if you need it!
 )
 
@@ -41,8 +40,8 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Println("Tracker URL:" + info.URL)
-		fmt.Println("Length:" + strconv.FormatInt(info.length, 10))
+		fmt.Printf("Tracker URL: %s", info.URL)
+		//fmt.Println("Length:" + strconv.FormatInt(info.length, 10))
 		//fmt.Printf("%d", info.length)
 	} else {
 		fmt.Println("Unknown command: " + command)
