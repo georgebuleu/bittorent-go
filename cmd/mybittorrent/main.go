@@ -41,7 +41,7 @@ func decodeList(s string) (interface{}, int, error) {
 		}
 		data, index, err := decodeBencode(list)
 		if err != nil {
-			return []interface{}{}, 0, err
+			return nil, 0, err
 		}
 
 		res = append(res, data)
@@ -50,7 +50,7 @@ func decodeList(s string) (interface{}, int, error) {
 
 	}
 	if rune(list[0]) != 'e' {
-		return []interface{}{}, 0, fmt.Errorf("wrong list encoding")
+		return nil, 0, fmt.Errorf("wrong list encoding")
 	}
 
 	return res, totalChars + 2, nil
@@ -105,7 +105,15 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		jsonOutput, _ := json.Marshal(decoded)
+
+		var jsonOutput []byte
+		if len(decoded.([]interface{})) == 0 {
+			jsonOutput = []byte("[]")
+		} else {
+			jsonOutput, _ = json.Marshal(decoded)
+		}
+
+		//jsonOutput, _ := json.Marshal(decoded)
 		fmt.Println(string(jsonOutput))
 	} else {
 		fmt.Println("Unknown command: " + command)
