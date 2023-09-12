@@ -2,6 +2,8 @@ package main
 
 import (
 	"crypto/sha1"
+	"encoding/hex"
+
 	// Uncomment this line to pass the first stage
 	// "encoding/json"
 	"encoding/json"
@@ -54,8 +56,9 @@ func main() {
 			return
 		}
 
-		hashedInfo := sha1.Sum([]byte(encoding))
-		fmt.Printf("Info Hash: %x", hashedInfo)
+		hashedBytes := sha1.Sum([]byte(encoding))
+		hashedInfo := hex.EncodeToString(hashedBytes[:])
+		fmt.Printf("Info Hash: %s", hashedInfo)
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
