@@ -41,12 +41,11 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("Tracker URL: %s\n", info.URL)
-		//fmt.Println("Length:" + strconv.FormatInt(info.length, 10))
-		fmt.Printf("Length: %d\n", info.length)
+		fmt.Printf("Tracker URL: %s", info.URL)
+		fmt.Printf("Length: %d", info.length)
 		data, err := parseInfo(path)
 		if err != nil {
-			fmt.Printf("error:%v\n", err)
+			fmt.Printf("error:%v", err)
 			return
 		}
 		encoding, err := bencode(data)
