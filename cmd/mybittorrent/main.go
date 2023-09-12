@@ -55,7 +55,7 @@ func main() {
 		}
 
 		hashedInfo := sha1.Sum([]byte(encoding))
-		fmt.Printf("Info Hash: %s", hashedInfo)
+		fmt.Printf("Info Hash: %x", hashedInfo)
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
