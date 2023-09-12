@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/sha1"
 	// Uncomment this line to pass the first stage
 	// "encoding/json"
 	"encoding/json"
@@ -40,9 +41,22 @@ func main() {
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("Tracker URL: %s", info.URL)
+		fmt.Printf("Tracker URL: %s\n", info.URL)
 		//fmt.Println("Length:" + strconv.FormatInt(info.length, 10))
-		fmt.Printf("Length: %d", info.length)
+		fmt.Printf("Length: %d\n", info.length)
+		data, err := parseInfo(path)
+		if err != nil {
+			fmt.Printf("error:%v\n", err)
+			return
+		}
+		encoding, err := bencode(data)
+		if err != nil {
+			fmt.Printf("error:%v\n", err)
+			return
+		}
+
+		hashedInfo := sha1.Sum([]byte(encoding))
+		fmt.Printf("Info Encoding: %s", hashedInfo)
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)
