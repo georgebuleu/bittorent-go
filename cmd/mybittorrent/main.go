@@ -62,9 +62,11 @@ func main() {
 		fmt.Printf("\nPiece Length: %d", torrent.pieceLength)
 		nPieces := len(torrent.pieces) / 20
 		fmt.Printf("\nPiece Hashes: ")
-		for i := 0; i < nPieces-1; i++ {
+		for i := 0; i < nPieces; i++ {
 			fmt.Printf("\n%x", []byte(torrent.pieces[i*20:(i+1)*20]))
-
+			//if len(torrent.pieces) > i*20 {
+			//	fmt.Println(torrent.pieces[i*20+1])
+			//}
 		}
 
 	} else {
