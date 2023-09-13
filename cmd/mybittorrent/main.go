@@ -63,7 +63,7 @@ func main() {
 		nPieces := len(torrent.pieces) / 20
 		fmt.Printf("Piece Hashes: \n")
 		for i := 0; i < nPieces-1; i++ {
-			fmt.Printf("%x\n", hex.EncodeToString([]byte(torrent.pieces[i*20:(i+1)*20])))
+			fmt.Printf("%x\n", []byte(torrent.pieces[i*20:(i+1)*20]))
 
 		}
 
