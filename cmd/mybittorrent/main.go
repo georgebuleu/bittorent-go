@@ -44,7 +44,7 @@ func main() {
 			return
 		}
 		fmt.Printf("Tracker URL: %s", torrent.url)
-		fmt.Printf("Length: %d", torrent.length)
+		fmt.Printf("\nLength: %d", torrent.length)
 		data, err := parseInfo(path)
 		if err != nil {
 			fmt.Printf("error:%v", err)
@@ -58,12 +58,12 @@ func main() {
 
 		hashedBytes := sha1.Sum([]byte(encoding))
 		hashedInfo := hex.EncodeToString(hashedBytes[:])
-		fmt.Printf("Info Hash: %s", hashedInfo)
-		fmt.Printf("Piece Length: %d", torrent.pieceLength)
+		fmt.Printf("\nInfo Hash: %s", hashedInfo)
+		fmt.Printf("\nPiece Length: %d", torrent.pieceLength)
 		nPieces := len(torrent.pieces) / 20
-		fmt.Printf("Piece Hashes: ")
+		fmt.Printf("\nPiece Hashes: ")
 		for i := 0; i < nPieces-1; i++ {
-			fmt.Printf("%x", []byte(torrent.pieces[i*20:(i+1)*20]))
+			fmt.Printf("\n%x", []byte(torrent.pieces[i*20:(i+1)*20]))
 
 		}
 
