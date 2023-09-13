@@ -38,13 +38,13 @@ func main() {
 		fmt.Println(string(jsonOutput))
 	} else if command == "info" {
 		path := os.Args[2]
-		info, err := parseTorrentFile(path)
+		torrent, err := parseTorrentFile(path)
 		if err != nil {
 			fmt.Println(err)
 			return
 		}
-		fmt.Printf("Tracker URL: %s", info.URL)
-		fmt.Printf("Length: %d", info.length)
+		fmt.Printf("Tracker URL: %s", torrent.url)
+		fmt.Printf("Length: %d", torrent.length)
 		data, err := parseInfo(path)
 		if err != nil {
 			fmt.Printf("error:%v", err)
@@ -52,13 +52,20 @@ func main() {
 		}
 		encoding, err := bencode(data)
 		if err != nil {
-			fmt.Printf("error:%v\n", err)
+			fmt.Printf("error:%v", err)
 			return
 		}
 
 		hashedBytes := sha1.Sum([]byte(encoding))
 		hashedInfo := hex.EncodeToString(hashedBytes[:])
 		fmt.Printf("Info Hash: %s", hashedInfo)
+		fmt.Printf("Piece Length: %d", torrent.pieceLength)
+		nPieces := len(torrent.pieces) / 20
+		fmt.Printf("Pieces Hashes:")
+		for i := 0; i < nPieces-1; i++ {
+			fmt.Printf("%v", hex.EncodeToString([]byte(torrent.pieces[i*20:(i+1)*20])))
+		}
+
 	} else {
 		fmt.Println("Unknown command: " + command)
 		os.Exit(1)

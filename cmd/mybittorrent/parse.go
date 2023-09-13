@@ -30,9 +30,25 @@ func parseTorrentFile(path string) (Torrent, error) {
 		return Torrent{}, fmt.Errorf("invalid 'length' field'")
 	}
 
+	pieceLength, ok := info["piece length"].(int)
+
+	if !ok {
+		return Torrent{}, fmt.Errorf("invalid 'piece length' field'")
+	}
+
+	pieces, ok := info["pieces"].(string)
+
+	if !ok {
+		return Torrent{}, fmt.Errorf("invalid 'pieces' field'")
+	}
+
 	return Torrent{
-		URL:    url,
-		length: int64(length),
+		Announce: Announce{url: url},
+		Info: Info{
+			length:      length,
+			pieceLength: pieceLength,
+			pieces:      pieces,
+		},
 	}, err
 
 }
@@ -52,22 +68,4 @@ func parseInfo(path string) (map[string]interface{}, error) {
 	}
 
 	return info, err
-}
-
-func extractInfoEncoding(path string) (string, error) {
-	var infoEncoding string
-
-	data, err := os.ReadFile(path)
-	if err != nil {
-		return "", fmt.Errorf("couldn't read from the file")
-	}
-
-	for i := 2; i < len(data); i++ {
-		if string(data[i:i+4]) == "info" {
-			infoEncoding = string(data[i-2:])
-			break
-
-		}
-	}
-	return infoEncoding, nil
 }
